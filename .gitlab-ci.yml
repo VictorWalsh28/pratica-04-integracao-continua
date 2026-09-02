@@ -11,6 +11,8 @@ test-job2:
   stage: test
   image: python:3.11
   before_script:
-    - pip install flask
+    - pip install -r requirements.txt
   script:
-    - python -m unittest -v tests/appTest.py
+    - python -m coverage run -m unittest -v tests/appTest.py
+    - python -m coverage report --fail-under=100
+  coverage: '/TOTAL.*\s+(\d+%)/'

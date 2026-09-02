@@ -1,4 +1,4 @@
-name: CI - Pratica 04
+name: CI - Testes e Cobertura
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
   test-job1:
     runs-on: ubuntu-latest
     steps:
-      - name: Primeiro job
+      - name: Mensagem do primeiro job
         run: echo "Primeiro job de teste executado com sucesso"
 
   test-job2:
@@ -24,8 +24,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Instalar Flask
-        run: pip install flask
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
 
-      - name: Executar testes unitarios
-        run: python -m unittest -v tests/appTest.py
+      - name: Executar testes unitarios com cobertura
+        run: |
+          python -m coverage run -m unittest -v tests/appTest.py
+          python -m coverage report --fail-under=100
