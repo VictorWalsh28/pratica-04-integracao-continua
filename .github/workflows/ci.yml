@@ -16,5 +16,16 @@ jobs:
   test-job2:
     runs-on: ubuntu-latest
     steps:
-      - name: Segundo job
-        run: echo "Segundo job de teste executado com sucesso"
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Flask
+        run: pip install flask
+
+      - name: Executar testes unitarios
+        run: python -m unittest -v tests/appTest.py
