@@ -1,0 +1,14 @@
+stages:
+  - test
+
+test-job1:
+  stage: test
+  image: python:3.11
+  script:
+    - echo "Primeiro job de teste executado com sucesso"
+
+test-job2:
+  stage: test
+  image: python:3.11
+  script:
+    - echo "Segundo job de teste executado com sucesso"

@@ -1,0 +1,20 @@
+name: CI - Pratica 04
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Primeiro job
+        run: echo "Primeiro job de teste executado com sucesso"
+
+  test-job2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Segundo job
+        run: echo "Segundo job de teste executado com sucesso"
