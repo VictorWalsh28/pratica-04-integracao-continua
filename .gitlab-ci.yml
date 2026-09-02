@@ -13,6 +13,6 @@ test-job2:
   before_script:
     - pip install -r requirements.txt
   script:
-    - python -m coverage run -m unittest -v tests/appTest.py
+    - python -m coverage run --source=app -m unittest -v tests/appTest.py
     - python -m coverage report --fail-under=100
   coverage: '/TOTAL.*\s+(\d+%)/'

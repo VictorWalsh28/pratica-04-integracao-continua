@@ -29,5 +29,5 @@ jobs:
 
       - name: Executar testes unitarios com cobertura
         run: |
-          python -m coverage run -m unittest -v tests/appTest.py
+          python -m coverage run --source=app -m unittest -v tests/appTest.py
           python -m coverage report --fail-under=100
