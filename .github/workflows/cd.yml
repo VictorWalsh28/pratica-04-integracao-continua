@@ -1,0 +1,76 @@
+name: CD - Build, Testes, Segurança e Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      aprovar_deploy:
+        description: "Aprovar deploy simulado em produção?"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build simulado
+        run: echo "Olá, ${{ github.actor }}! Build concluído com sucesso."
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Executar testes com cobertura
+        run: |
+          python -m coverage run --source=app -m unittest -v tests/appTest.py
+          python -m coverage report --fail-under=100
+
+  sast:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Bandit
+        run: pip install bandit
+
+      - name: Executar SAST
+        run: bandit -r app -q
+
+  deploy:
+    needs: [unit-test, sast]
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.aprovar_deploy == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy simulado
+        run: |
+          echo "Implantando a branch $GITHUB_REF_NAME em produção..."
+          sleep 20
+          echo "Implantação concluída com sucesso!"

@@ -1,13 +1,18 @@
-stages:
-  - test
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
 
-test-job1:
-  stage: test
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
   image: python:3.11
   script:
-    - echo "Primeiro job de teste executado com sucesso"
+    - echo "Olá, $GITLAB_USER_LOGIN!"
 
-test-job2:
+unit-test-job:
   stage: test
   image: python:3.11
   before_script:
@@ -16,3 +21,19 @@ test-job2:
     - python -m coverage run --source=app -m unittest -v tests/appTest.py
     - python -m coverage report --fail-under=100
   coverage: '/TOTAL.*\s+(\d+%)/'
+
+test-job2:
+  stage: test
+  image: python:3.11
+  script:
+    - echo "Etapa adicional de teste executada com sucesso"
+
+deploy-prod-job:
+  stage: deploy
+  image: python:3.11
+  script:
+    - echo "Implantando a branch $CI_COMMIT_BRANCH em produção..."
+    - sleep 20
+    - echo "Implantação concluída com sucesso!"
+  when: manual
+  manual_confirmation: "Aprovar o deploy a partir da branch $CI_COMMIT_BRANCH?"
