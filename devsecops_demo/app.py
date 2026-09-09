@@ -27,14 +27,15 @@ def login():
     username = request.args.get("username", "")
     password = request.args.get("password", "")
 
-    # VULNERÁVEL: concatenação direta de dados fornecidos pelo usuário.
-    sql = (
-        "SELECT id, username, password FROM users "
-        f"WHERE username = '{username}' AND password = '{password}'"
-    )
+    # SEGURO: parâmetros são enviados separadamente da instrução SQL.
+    sql = """
+        SELECT id, username, password
+        FROM users
+        WHERE username = ? AND password = ?
+    """
 
     conn = get_connection()
-    rows = conn.execute(sql).fetchall()
+    rows = conn.execute(sql, (username, password)).fetchall()
     conn.close()
 
     return jsonify([dict(row) for row in rows])
