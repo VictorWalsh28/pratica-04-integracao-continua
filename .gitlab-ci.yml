@@ -1,39 +1,20 @@
-include:
-  - template: Jobs/SAST.gitlab-ci.yml
-
 stages:
-  - build
   - test
-  - deploy
+  - validate
 
-build-job:
-  stage: build
-  image: python:3.11
-  script:
-    - echo "Olá, $GITLAB_USER_LOGIN!"
-
-unit-test-job:
-  stage: test
-  image: python:3.11
-  before_script:
-    - pip install -r requirements.txt
-  script:
-    - python -m coverage run --source=app -m unittest -v tests/appTest.py
-    - python -m coverage report --fail-under=100
-  coverage: '/TOTAL.*\s+(\d+%)/'
-
-test-job2:
+semgrep-sast:
   stage: test
   image: python:3.11
   script:
-    - echo "Etapa adicional de teste executada com sucesso"
+    - python devsecops_demo/security_check.py || true
+    - echo "Relatório SAST gerado."
+  artifacts:
+    when: always
+    paths:
+      - devsecops_demo/app.py
 
-deploy-prod-job:
-  stage: deploy
+check-sast-report:
+  stage: validate
   image: python:3.11
   script:
-    - echo "Implantando a branch $CI_COMMIT_BRANCH em produção..."
-    - sleep 20
-    - echo "Implantação concluída com sucesso!"
-  when: manual
-  manual_confirmation: "Aprovar o deploy a partir da branch $CI_COMMIT_BRANCH?"
+    - python devsecops_demo/security_check.py

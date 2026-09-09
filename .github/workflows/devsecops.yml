@@ -1,0 +1,39 @@
+name: DevSecOps - SQL Injection
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  semgrep-sast:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Executar análise SAST
+        run: |
+          python devsecops_demo/security_check.py || true
+          echo "Relatório de análise gerado."
+
+  check-sast-report:
+    needs: semgrep-sast
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validar relatório SAST
+        run: python devsecops_demo/security_check.py
