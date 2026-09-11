@@ -1,20 +1,44 @@
+image:
+  name: hashicorp/terraform:1.9.8
+  entrypoint: [""]
+
 stages:
-  - test
   - validate
+  - plan
+  - apply
 
-semgrep-sast:
-  stage: test
-  image: python:3.11
-  script:
-    - python devsecops_demo/security_check.py || true
-    - echo "Relatório SAST gerado."
-  artifacts:
-    when: always
-    paths:
-      - devsecops_demo/app.py
+before_script:
+  - cd terraform
+  - terraform init -input=false
 
-check-sast-report:
+fmt:
   stage: validate
-  image: python:3.11
   script:
-    - python devsecops_demo/security_check.py
+    - terraform fmt -check
+
+validate:
+  stage: validate
+  script:
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - terraform plan -out=plan.out
+  artifacts:
+    paths:
+      - terraform/plan.out
+    expire_in: 1 day
+
+apply:
+  stage: apply
+  dependencies:
+    - plan
+  script:
+    - terraform apply -auto-approve plan.out
+    - cat exemplo.txt
+  artifacts:
+    paths:
+      - terraform/exemplo.txt
+    expire_in: 1 day
+  when: manual
