@@ -16,3 +16,5 @@ docker run --rm -p 5000:5000 pratica09
 ```
 
 Acesse: http://localhost:5000/
+
+Cache habilitado para otimizar os builds seguintes.
