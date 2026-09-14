@@ -29,3 +29,6 @@ python -m unittest -v tests/appTest.py
 python -m coverage run -m unittest -v tests/appTest.py
 python -m coverage report --fail-under=100
 ```
+
+## Pratica 09 - Automacao de Build
+Alteracao realizada para iniciar o pipeline basico da Pratica 09.

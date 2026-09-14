@@ -1,44 +1,15 @@
-image:
-  name: hashicorp/terraform:1.9.8
-  entrypoint: [""]
-
-stages:
-  - validate
-  - plan
-  - apply
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
 
 before_script:
-  - cd terraform
-  - terraform init -input=false
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-fmt:
-  stage: validate
-  script:
-    - terraform fmt -check
+stages:
+  - build
 
-validate:
-  stage: validate
+build:
+  stage: build
   script:
-    - terraform validate
-
-plan:
-  stage: plan
-  script:
-    - terraform plan -out=plan.out
-  artifacts:
-    paths:
-      - terraform/plan.out
-    expire_in: 1 day
-
-apply:
-  stage: apply
-  dependencies:
-    - plan
-  script:
-    - terraform apply -auto-approve plan.out
-    - cat exemplo.txt
-  artifacts:
-    paths:
-      - terraform/exemplo.txt
-    expire_in: 1 day
-  when: manual
+    - echo "simulando um docker build"
